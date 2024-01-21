@@ -1,4 +1,4 @@
-# On-Boarding and Help Center for API user
+# BNI Product Recomendation
 
 We have developed a dynamic Python script hosted on IBM Cloud Code Engine to enhance user interaction by enabling inquiries. This script seamlessly integrates various cutting-edge technologies, including 
 - Watson Assistant,
