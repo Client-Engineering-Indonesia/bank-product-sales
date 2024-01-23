@@ -1,0 +1,171 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+      "title": "Custom title",
+      "description": "Here's a longer description of the custom **OpenAPI** schema",
+      "version": "3.0.2",
+      "x-logo": {
+        "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+      }
+    },
+    "paths": {
+      "/": {
+        "get": {
+          "summary": "Root",
+          "operationId": "root__get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ping": {
+        "get": {
+          "summary": "Ping",
+          "operationId": "ping_ping_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/bni_product_reco": {
+        "post": {
+          "summary": "Get Product Recommendation",
+          "operationId": "get_product_reco_crsl",
+          "requestBody": {
+            "description": "User input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cust_profile": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["cust_profile"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "output": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/bni_product_promo": {
+        "post": {
+          "summary": "Get Product Promo",
+          "operationId": "get_product_promo_crsl",
+          "requestBody": {
+            "description": "User input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cust_profile": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["cust_profile"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "output": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/bni_product_info": {
+        "post": {
+          "summary": "Get Product Information",
+          "operationId": "get_product_info",
+          "requestBody": {
+            "description": "User input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product_name": {
+                      "type": "string"
+                    },
+                    "user_question": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["product_name", "user_question"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "output": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "servers": [
+      {
+        "url": "https://bni-products-reco.1c6s5w3a4ejy.jp-tok.codeengine.appdomain.cloud/"
+      }
+    ]
+  }
+  
