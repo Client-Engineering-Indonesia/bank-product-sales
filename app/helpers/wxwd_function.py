@@ -5,7 +5,7 @@ from ibm_watson.discovery_v2 import DiscoveryV2, QueryLargePassages
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson_machine_learning.foundation_models import Model
 from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
-import os, re
+import os, re, ast
 # from dotenv import load_dotenv
 
 class WatsonQA:
@@ -182,6 +182,7 @@ class WatsonQA:
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+        output_stage["output"] = ast.literal_eval(output_stage['output'])
         return output_stage
     
 
@@ -227,6 +228,7 @@ class WatsonQA:
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"options": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["options"] = re.sub(' +', ' ', output_stage["options"])
+        output_stage["options"] = ast.literal_eval(output_stage['options'])
         output_stage['title'] = "Pilih salah satu rekomendasi produk berikut:"
         output_stage['description'] = "opsi rekomendasi"
         output_stage['response_type'] = "option"
@@ -252,6 +254,7 @@ class WatsonQA:
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+        output_stage["output"] = ast.literal_eval(output_stage['output'])
         return output_stage
     
 
@@ -297,6 +300,7 @@ class WatsonQA:
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"options": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["options"] = re.sub(' +', ' ', output_stage["options"])
+        output_stage["options"] = ast.literal_eval(output_stage['options'])
         output_stage['title'] = "Pilih salah satu rekomendasi produk berikut:"
         output_stage['description'] = "opsi rekomendasi"
         output_stage['response_type'] = "option"
