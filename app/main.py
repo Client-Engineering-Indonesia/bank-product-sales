@@ -44,51 +44,35 @@ async def get_recommendation(request: Request):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-@app.post("/bni_promo")
-async def get_promo(request: Request):
-    #user_question, context_previous
+@app.post("/bni_product_promo")
+async def get_recommendation(request: Request):
+
     try:
         user_input = await request.json()
-        product_name = user_input['product_name']
+        #question = user_input['user_question']
         context = user_input['cust_profile']
         watson_qa_instance = WatsonQA()
-        answer = await watson_qa_instance.watsonxai_product_promo(product_name, context)
+        answer = await watson_qa_instance.watsonxai_product_promo(context)
         return answer
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
 
 @app.post("/bni_product_info")
 async def get_product_info(request: Request):
 
     try:
         user_input = await request.json()
+        product_name = user_input['product_name']
         question = user_input['user_question']
         watson_qa_instance = WatsonQA()
-        answer = await watson_qa_instance.watsonxai_product_information(question)
+        answer = await watson_qa_instance.watsonxai_product_information(product_name, question)
         return answer
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
     
-# def custom_openapi():
-#     if app.openapi_schema:
-#         return app.openapi_schema
-#     openapi_schema = get_openapi(
-#         title="Custom title",
-#         version="3.0.2",
-#         summary="This is a very custom OpenAPI schema",
-#         description="Here's a longer description of the custom **OpenAPI** schema",
-#         routes=app.routes,
-#     )
-#     openapi_schema["info"]["x-logo"] = {
-#         "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
-#     }
-#     app.openapi_schema = openapi_schema
-#     return app.openapi_schema
-
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
