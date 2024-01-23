@@ -41,22 +41,22 @@
         }
       }
     },
-    "/process_dict_req": {
+    "/bni_product_reco": {
       "post": {
-        "summary": "Process Dict Req",
-        "operationId": "process_dict_req_process_dict_req_post",
+        "summary": "Get Product Recommendation",
+        "operationId": "get_product_reco",
         "requestBody": {
-          "description": "Passage data",
+          "description": "User input data",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "answer": {
+                  "cust_profile": {
                     "type": "string"
                   }
                 },
-                "required": ["answer"]
+                "required": ["cust_profile"]
               }
             }
           }
@@ -69,51 +69,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "modified_answer": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/bni_helps": {
-      "post": {
-        "summary": "Get Watsondiscovery Answer",
-        "operationId": "get_watsondiscovery_answer_bni_helps_post",
-        "requestBody": {
-          "description": "User question data",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "question": {
-                    "type": "string"
-                  }
-                },
-                "required": ["question"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "modified_answer": {
-                      "type": "object",
-                      "properties": {
-                        "output": {
-                          "type": "string"
-                        }
+                    "output": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "alt": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["alt", "url", "title", "description"]
                       }
                     }
                   }
@@ -124,22 +98,22 @@
         }
       }
     },
-    "/bni_recommendation": {
+    "/bni_product_promo": {
       "post": {
-        "summary": "Get Recommendation",
-        "operationId": "get_recommendation",
+        "summary": "Get Product Promo",
+        "operationId": "get_product_promo",
         "requestBody": {
-          "description": "User answer data",
+          "description": "User input data",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "prev_answer": {
+                  "cust_profile": {
                     "type": "string"
                   }
                 },
-                "required": ["prev_answer"]
+                "required": ["cust_profile"]
               }
             }
           }
@@ -152,12 +126,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "recommend_answer": {
-                      "type": "object",
-                      "properties": {
-                        "output": {
-                          "type": "string"
-                        }
+                    "output": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "alt": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["alt", "url", "title", "description"]
                       }
                     }
                   }
@@ -168,25 +155,25 @@
         }
       }
     },
-    "/bni_answer_historical": {
+    "/bni_product_info": {
       "post": {
-        "summary": "Get Answer History",
-        "operationId": "get_answer_history",
+        "summary": "Get Product Information",
+        "operationId": "get_product_info",
         "requestBody": {
-          "description": "User question and history data",
+          "description": "User input data",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "question": {
+                  "product_name": {
                     "type": "string"
                   },
-                  "history": {
+                  "user_question": {
                     "type": "string"
                   }
                 },
-                "required": ["question", "history"]
+                "required": ["product_name", "user_question"]
               }
             }
           }
@@ -199,13 +186,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "historical_answer": {
-                      "type": "object",
-                      "properties": {
-                        "output": {
-                          "type": "string"
-                        }
-                      }
+                    "output": {
+                      "type": "string"
                     }
                   }
                 }
@@ -218,7 +200,7 @@
   },
   "servers": [
     {
-      "url": "https://bni-help-center.1c6s5w3a4ejy.jp-tok.codeengine.appdomain.cloud/"
+      "url": "https://bni-products-reco.1c6s5w3a4ejy.jp-tok.codeengine.appdomain.cloud/"
     }
   ]
 }
