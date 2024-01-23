@@ -6,31 +6,31 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson_machine_learning.foundation_models import Model
 from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
 import os, re
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 class WatsonQA:
 
     def __init__(self):
-        dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-        load_dotenv(dotenv_path)
+        # dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+        # load_dotenv(dotenv_path)
 
-        self.WD_API_KEY = os.getenv('WD_API_KEY')
-        self.WD_PROJECT_ID = os.getenv('WD_PROJECT_ID')
-        self.WD_PROJECT_ID_2 = os.getenv('WD_PROJECT_ID_2')
-        self.WD_URL = os.getenv('WD_URL')
+        # self.WD_API_KEY = os.getenv('WD_API_KEY')
+        # self.WD_PROJECT_ID = os.getenv('WD_PROJECT_ID')
+        # self.WD_PROJECT_ID_2 = os.getenv('WD_PROJECT_ID_2')
+        # self.WD_URL = os.getenv('WD_URL')
 
-        self.WX_API_KEY = os.getenv('WX_API_KEY')
-        self.WX_PROJECT_ID = os.getenv('WX_PROJECT_ID')
-        self.WX_URL = os.getenv('WX_URL')
+        # self.WX_API_KEY = os.getenv('WX_API_KEY')
+        # self.WX_PROJECT_ID = os.getenv('WX_PROJECT_ID')
+        # self.WX_URL = os.getenv('WX_URL')
 
-        # self.WD_API_KEY = os.environ['WD_API_KEY']
-        # self.WD_PROJECT_ID = os.environ['WD_PROJECT_ID']
-        # self.WD_PROJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
-        # self.WD_URL = os.environ['WD_URL']
+        self.WD_API_KEY = os.environ['WD_API_KEY']
+        self.WD_PROJECT_ID = os.environ['WD_PROJECT_ID']
+        self.WD_PROJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
+        self.WD_URL = os.environ['WD_URL']
 
-        # self.WX_API_KEY = os.environ['WX_API_KEY']
-        # self.WX_PROJECT_ID = os.environ['WX_PROJECT_ID']
-        # self.WX_URL = os.environ['WX_URL']
+        self.WX_API_KEY = os.environ['WX_API_KEY']
+        self.WX_PROJECT_ID = os.environ['WX_PROJECT_ID']
+        self.WX_URL = os.environ['WX_URL']
 
         # Initialize Watson Discovery
         self.authenticator_wd = IAMAuthenticator(self.WD_API_KEY)
@@ -162,53 +162,76 @@ class WatsonQA:
 
         return output
     
-    ### Show promo recomendation based on BNI products offer
-    def watsonxai_promo(self, user_question, context_previous):
-        
+    ### Show BNI products based on customer profile
+    async def watsonxai_product_reco(self, context_previous):
         PROJECT_ID = self.WD_PROJECT_ID
         context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=True)
-        # json_format = {"nama promo":" ", "tipe_kartu":" ", "persyaratan":" "}
-        json_format = {"alt": "nama promo", "url": "jpg url jika ada", "title": "nama promo", "description": "deskripsi dan persyaratan promo"}
-
-        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
-        Konteks_wd: {context_text}
-        Konteks_previous: {context_previous}
-        Pertanyaan: {user_question}
-        Berikan 3 rekomendasi promo BNI berdasarkan kriteria dari Konteks_previous yang terkait dengan Konteks_wd berupa json format: {json_format}. Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
-        Jawaban:
-        """
-        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
-        output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
-        output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
-        # output_stage["output"] = re.sub("\n", "", output_stage["output"])
-
-        return output_stage
-    
-    ### Show how many cards available based on BNI promo offer
-    def watsonxai_product(self, user_question, context_previous):
-
-        PROJECT_ID = self.WD_PROJECT_ID_2
-        context_text = self.send_to_watsondiscovery(user_question, PROJECT_ID, text_list=False)
-        # json_format = {"nama promo":" ", "tipe_kartu":" ", "persyaratan":" "}
         json_format = {"alt": "produk kartu bni", "url": "jpg url jika ada", "title": "produk kartu bni", "description": "deskripsi dan persyaratan produk kartu bni"}
+        user_question = "Berdasarkan deskripsi yang kamu berikan ini 3 top produk yang mungkin cocok untuk customer kamu?"
 
         prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
         Konteks_wd: {context_text}
         Konteks_previous: {context_previous}
         Pertanyaan: {user_question}
         Carilah informasi produk BNI yang sesuai dengan Pertanyaan. Berikan informasi produk BNI berdasarkan kriteria dari Konteks_previous yang terkait dengan Konteks_wd berupa json format: {json_format}. Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
-        Jawaban:
+        Jawaban: {{output}}
         """
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
-        # output_stage["output"] = re.sub("\n", "", output_stage["output"])
-
         return output_stage
     
-    ### Show information about the products
-    def watsonxai_product_information(self, user_question):
+    ### Show BNI offer based on product and customer profile
+    async def watsonxai_product_promo(self, product_name, context_previous):
+        PROJECT_ID = self.WD_PROJECT_ID
+        context_text = self.send_to_watsondiscovery(product_name, PROJECT_ID, text_list=True)
+        print(context_text)
 
+        json_format = {"alt": "nama promo", "url": "jpg url jika ada", "title": "nama promo", "description": "deskripsi dan persyaratan promo"}
+        #user_question = "Berdasarkan deskripsi yang kamu berikan ini 3 promo yang mungkin cocok untuk customer kamu?"
+
+        prompt_stage = f"""
+        Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        Konteks_wd: {context_text}
+        Konteks_previous: {context_previous}
+        konteks_wd adalah informasi mengenai promo, Konteks_previous adalah informasi mengenai customer.
+        Berdasarkan informasi diatas berikan 3 promo yang mungkin cocok untuk customer kamu.
+        Buat Jawaban dalam json format: {{json_format}}.
+        """
+
+        # Send the prompt to WatsonXAI
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+
+        # Check if output_stage is None
+        if output_stage is None:
+            return {"output": "Error: WatsonXAI response is None."}
+
+        # Format the final response
+        output_text = str(output_stage).replace('\n\n', ' ').replace('*', '<li>')
+        output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+
+        return output_stage
+
+    # async def watsonxai_product_promo(self, product_name, context_previous):
+    #     PROJECT_ID = self.WD_PROJECT_ID
+    #     context_text = self.send_to_watsondiscovery(product_name, PROJECT_ID, text_list=True)
+    #     json_format = {"alt": "nama promo", "url": "jpg url jika ada", "title": "nama promo", "description": "deskripsi dan persyaratan promo"}
+    #     user_question = "Berdasarkan deskripsi yang kamu berikan ini 3 promo yang mungkin cocok untuk customer kamu?"
+
+    #     prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+    #     Konteks_wd: {context_text}
+    #     Konteks_previous: {context_previous}
+    #     Pertanyaan: {user_question}
+    #     Gunakan Konteks_wd untuk menjawab Pertanyaan berdasarkan kriteria dari Konteks_previous. Buat Jawaban dalam json format: {json_format}. Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+    #     """
+    #     output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+    #     output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+    #     output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+    #     return output_stage
+
+    ### Show information about the products
+    async def watsonxai_product_information(self, user_question):
         PROJECT_ID = self.WD_PROJECT_ID_2
         context_text = self.send_to_watsondiscovery(user_question, PROJECT_ID, text_list=False)
 
@@ -221,9 +244,49 @@ class WatsonQA:
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
-        # output_stage["output"] = re.sub("\n", "", output_stage["output"])
-
         return output_stage
+    
+    # async def watsonxai_promo(self, user_question, context_previous):   
+    #     PROJECT_ID = self.WD_PROJECT_ID
+    #     context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=True)
+    #     # json_format = {"nama promo":" ", "tipe_kartu":" ", "persyaratan":" "}
+    #     json_format = {"alt": "nama promo", "url": "jpg url jika ada", "title": "nama promo", "description": "deskripsi dan persyaratan promo"}
+
+    #     prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+    #     Konteks_wd: {context_text}
+    #     Konteks_previous: {context_previous}
+    #     Pertanyaan: {user_question}
+    #     Berikan 3 rekomendasi promo BNI berdasarkan kriteria dari Konteks_previous yang terkait dengan Konteks_wd berupa json format: {json_format}. Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+    #     Jawaban:
+    #     """
+    #     output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+    #     output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+    #     output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+    #     # output_stage["output"] = re.sub("\n", "", output_stage["output"])
+
+    #     return output_stage
+    
+    # ### Show how many cards available based on BNI promo offer
+    # async def watsonxai_product(self, user_question, context_previous):
+
+    #     PROJECT_ID = self.WD_PROJECT_ID_2
+    #     context_text = self.send_to_watsondiscovery(user_question, PROJECT_ID, text_list=False)
+    #     # json_format = {"nama promo":" ", "tipe_kartu":" ", "persyaratan":" "}
+    #     json_format = {"alt": "produk kartu bni", "url": "jpg url jika ada", "title": "produk kartu bni", "description": "deskripsi dan persyaratan produk kartu bni"}
+
+    #     prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+    #     Konteks_wd: {context_text}
+    #     Konteks_previous: {context_previous}
+    #     Pertanyaan: {user_question}
+    #     Carilah informasi produk BNI yang sesuai dengan Pertanyaan. Berikan informasi produk BNI berdasarkan kriteria dari Konteks_previous yang terkait dengan Konteks_wd berupa json format: {json_format}. Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+    #     Jawaban:
+    #     """
+    #     output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+    #     output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+    #     output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+    #     # output_stage["output"] = re.sub("\n", "", output_stage["output"])
+
+    #     return output_stage
     
 # Example Usage
 # watson_qa_instance = WatsonQA()

@@ -9,7 +9,6 @@ import pandas as pd
 
 from app.helpers.helper import *
 from app.helpers.wxwd_function import *
-from app.helpers.cos_public_image import *
 
 app = FastAPI(
     title='Sample-app FastAPI and Docker',
@@ -31,60 +30,48 @@ async def ping():
 #     # For example, let's just return the received dictionary as is
 #     return input_dict
 
-@app.post("/process_dict_req")
-async def process_dict_req(request: Request):
-    try:
-        passage = await request.json()
-        answer = passage['answer']
-        modified_answer = await replace_urls(answer)
-        return {"modified_answer": modified_answer}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.post("/bni_helps")
-async def get_watsondiscovery_answer(request: Request):
-
-    try:
-        user_question = await request.json()
-        question = user_question['question']
-        watson_qa_instance = WatsonQA()
-        modified_answer = await watson_qa_instance.watsonxai(question)
-        return {"modified_answer": modified_answer}
-    
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.post("/bni_recommendation")
+@app.post("/bni_product_reco")
 async def get_recommendation(request: Request):
 
     try:
-        user_answer = await request.json()
-        prev_answer = user_answer['prev_answer']
+        user_input = await request.json()
+        #question = user_input['user_question']
+        context = user_input['cust_profile']
         watson_qa_instance = WatsonQA()
-        recommend_answer = await watson_qa_instance.watsonxai_reco(prev_answer)
-        return {"recommend_answer": recommend_answer}
+        answer = await watson_qa_instance.watsonxai_product_reco(context)
+        return answer
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
+@app.post("/bni_promo")
+async def get_promo(request: Request):
+    #user_question, context_previous
+    try:
+        user_input = await request.json()
+        product_name = user_input['product_name']
+        context = user_input['cust_profile']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_promo(product_name, context)
+        return answer
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/bni_answer_historical")
-async def get_answer_history(request: Request):
+
+@app.post("/bni_product_info")
+async def get_product_info(request: Request):
 
     try:
-        user_question = await request.json()
-        question = user_question['question']
-        history = user_question['history']
-
+        user_input = await request.json()
+        question = user_input['user_question']
         watson_qa_instance = WatsonQA()
-        modified_answer = await watson_qa_instance.watsonxai_history(question, history)
-        return {"historical_answer": modified_answer}
+        answer = await watson_qa_instance.watsonxai_product_information(question)
+        return answer
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-
-
     
 # def custom_openapi():
 #     if app.openapi_schema:
