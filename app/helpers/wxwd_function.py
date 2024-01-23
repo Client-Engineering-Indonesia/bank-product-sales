@@ -184,6 +184,56 @@ class WatsonQA:
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
         return output_stage
     
+
+    async def watsonxai_product_reco_crsl(self, context_previous):
+        PROJECT_ID = self.WD_PROJECT_ID
+        context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=False)
+        json_format = {
+            "alt": "nama produk BNI",
+            "url": "jpg url jika ada",
+            "title": "nama produk BNI, bisa berupa nama tabungan, kartu debit, atau kartu kredit",
+            "description": "deskripsi dan persyaratan dari produk"
+        }
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        promo: {context_text}
+        client: {context_previous}
+        Temukan 3 promo yang sesuai dengan info profile client. Ekstrak 3 nama produk bank BNI seperti nama tabungan, nama kartu kredit, nama kartu debit yang ada pada promo. Cari informasi dari produk tersebut. Outputkan hasil dalam format JSON seperti {json_format}."
+        Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+        Output:"""
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"carousel_data": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["carousel_data"] = re.sub(' +', ' ', output_stage["carousel_data"])
+        output_stage["user_defined_type"] = "carousel"
+        return output_stage
+    
+
+    async def watsonxai_product_reco_opt(self, context_previous):
+        PROJECT_ID = self.WD_PROJECT_ID
+        context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=False)
+        json_format = {
+            "label": "nama produk BNI",
+            "value": {
+                "input": {
+                    "text": "nama produk BNI, bisa berupa nama tabungan, kartu debit, atau kartu kredit"
+                }
+            }
+        }
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        promo: {context_text}
+        client: {context_previous}
+        Temukan 3 promo yang sesuai dengan info profile client. Ekstrak 3 nama produk bank BNI seperti nama tabungan, nama kartu kredit, nama kartu debit yang ada pada promo. Cari informasi dari produk tersebut. Outputkan hasil dalam format JSON seperti {json_format}."
+        Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+        Output:"""
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"options": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["options"] = re.sub(' +', ' ', output_stage["options"])
+        output_stage['title'] = "Pilih salah satu rekomendasi produk berikut:"
+        output_stage['description'] = "opsi rekomendasi"
+        output_stage['response_type'] = "option"
+
+        return {"output": [output_stage]}
+    
+    
     async def watsonxai_product_promo(self, context_previous):
         PROJECT_ID = self.WD_PROJECT_ID
         context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=True)
@@ -203,6 +253,55 @@ class WatsonQA:
         output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
         return output_stage
+    
+
+    async def watsonxai_product_promo_crsl(self, context_previous):
+        PROJECT_ID = self.WD_PROJECT_ID
+        context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=True)
+        json_format = {
+            "alt": "nama produk BNI",
+            "url": "jpg url jika ada",
+            "title": "nama produk BNI, bisa berupa nama tabungan, kartu debit, atau kartu kredit",
+            "description": "deskripsi dan persyaratan dari produk"
+        }
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        promo: {context_text}
+        client: {context_previous}
+        Temukan 3 promo yang sesuai dengan info profile client. Ekstrak 3 nama produk bank BNI seperti nama tabungan, nama kartu kredit, nama kartu debit yang ada pada promo. Cari informasi dari produk tersebut. Outputkan hasil dalam format JSON seperti {json_format}."
+        Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+        Output:"""
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"carousel_data": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["carousel_data"] = re.sub(' +', ' ', output_stage["carousel_data"])
+        output_stage["user_defined_type"] = "carousel"
+        return output_stage
+    
+
+    async def watsonxai_product_promo_opt(self, context_previous):
+        PROJECT_ID = self.WD_PROJECT_ID
+        context_text = self.send_to_watsondiscovery(context_previous, PROJECT_ID, text_list=True)
+        json_format = {
+            "label": "nama produk BNI",
+            "value": {
+                "input": {
+                    "text": "nama produk BNI, bisa berupa nama tabungan, kartu debit, atau kartu kredit"
+                }
+            }
+        }
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        promo: {context_text}
+        client: {context_previous}
+        Temukan 3 promo yang sesuai dengan info profile client. Ekstrak 3 nama produk bank BNI seperti nama tabungan, nama kartu kredit, nama kartu debit yang ada pada promo. Cari informasi dari produk tersebut. Outputkan hasil dalam format JSON seperti {json_format}."
+        Jangan menambahkan kesimpulan, keterangan, duplikasi jawaban, dan informasi tambahan selain dari json format yang diminta.
+        Output:"""
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"options": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["options"] = re.sub(' +', ' ', output_stage["options"])
+        output_stage['title'] = "Pilih salah satu rekomendasi produk berikut:"
+        output_stage['description'] = "opsi rekomendasi"
+        output_stage['response_type'] = "option"
+
+        return {"output": [output_stage]}
     
 
     ### Show information about the products

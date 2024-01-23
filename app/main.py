@@ -3,6 +3,7 @@ warnings.filterwarnings('ignore')
 
 import io
 import os
+import ast
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.openapi.utils import get_openapi
 import pandas as pd
@@ -45,7 +46,7 @@ async def get_recommendation(request: Request):
         raise HTTPException(status_code=400, detail=str(e))
     
 @app.post("/bni_product_promo")
-async def get_recommendation(request: Request):
+async def get_promo(request: Request):
 
     try:
         user_input = await request.json()
@@ -55,6 +56,72 @@ async def get_recommendation(request: Request):
         answer = await watson_qa_instance.watsonxai_product_promo(context)
         return answer
     
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+
+@app.post("/bni_product_reco_opt")
+async def get_recommendation_opt(request: Request):
+
+    try:
+        user_input = await request.json()
+        #question = user_input['user_question']
+        context = user_input['cust_profile']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_reco_opt(context)
+        return answer
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+@app.post("/bni_product_promo_opt")
+async def get_promo_opt(request: Request):
+
+    try:
+        user_input = await request.json()
+        #question = user_input['user_question']
+        context = user_input['cust_profile']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_promo_opt(context)
+        return answer
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/bni_product_reco_crsl")
+async def get_recommendation_crsl(request: Request):
+
+    try:
+        user_input = await request.json()
+        #question = user_input['user_question']
+        context = user_input['cust_profile']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_reco_crsl(context)
+
+        defined_answer = {}
+        answer['carousel_data'] = ast.literal_eval(answer['carousel_data'] )
+        defined_answer['user_defined'] = answer
+        defined_answer['response_type'] = "user_defined"
+        return {"output":[defined_answer]}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/bni_product_promo_crsl")
+async def get_promo_crsl(request: Request):
+
+    try:
+        user_input = await request.json()
+        #question = user_input['user_question']
+        context = user_input['cust_profile']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_promo_crsl(context)
+        
+        defined_answer = {}
+        answer['carousel_data'] = ast.literal_eval(answer['carousel_data'] )
+        defined_answer['user_defined'] = answer
+        defined_answer['response_type'] = "user_defined"
+        return {"output":[defined_answer]}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
