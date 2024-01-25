@@ -70,25 +70,7 @@
                   "type": "object",
                   "properties": {
                     "output": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "alt": {
-                            "type": "string"
-                          },
-                          "url": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          }
-                        },
-                        "required": ["alt", "url", "title", "description"]
-                      }
+                      "type": "array"
                     }
                   }
                 }
@@ -127,25 +109,7 @@
                   "type": "object",
                   "properties": {
                     "output": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "alt": {
-                            "type": "string"
-                          },
-                          "url": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          }
-                        },
-                        "required": ["alt", "url", "title", "description"]
-                      }
+                      "type": "array"
                     }
                   }
                 }
@@ -198,9 +162,94 @@
       }
     }
   },
+  "/bni_product_summary": {
+    "post": {
+      "summary": "Get Product Summary",
+      "operationId": "get_product_summary",
+      "requestBody": {
+        "description": "product summary",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "product_name": {
+                  "type": "string"
+                },
+                "user_question": {
+                  "type": "string"
+                }
+              },
+              "required": ["product_name"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful Response",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "output": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/bni_product_comparison": {
+    "post": {
+      "summary": "Get Product Summary",
+      "operationId": "get_product_summary",
+      "requestBody": {
+        "description": "product summary",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "product_name": {
+                  "type": "string"
+                },
+                "user_question": {
+                  "type": "string"
+                }
+              },
+              "required": ["product_name"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful Response",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "output": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "servers": [
     {
-      "url": "https://bni-products-reco.1c6s5w3a4ejy.jp-tok.codeengine.appdomain.cloud/"
+      "url": "https://bni-products-reco.1cjochj6imiv.jp-tok.codeengine.appdomain.cloud/"
     }
   ]
 }
+
