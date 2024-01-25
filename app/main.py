@@ -138,8 +138,34 @@ async def get_product_info(request: Request):
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+###
+@app.post("/bni_product_summary")
+async def get_product_summary(request: Request):
+
+    try:
+        user_input = await request.json()
+        product_name = user_input['product_name']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_summary(product_name)
+        return answer
     
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
     
+@app.post("/bni_product_comparison")
+async def get_product_comparison(request: Request):
+
+    try:
+        user_input = await request.json()
+        product_name = user_input['product_name']
+        product_name_compare = user_input['product_name_compare']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_product_comparison(product_name, product_name_compare)
+        return answer
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+####
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
