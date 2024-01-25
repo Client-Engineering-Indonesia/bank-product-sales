@@ -205,8 +205,8 @@
     },
     "/bni_product_comparison": {
       "post": {
-        "summary": "Get Product Summary",
-        "operationId": "get_product_summary",
+        "summary": "Get Product Comparison",
+        "operationId": "get_product_comparison",
         "requestBody": {
           "description": "product summary",
           "content": {
