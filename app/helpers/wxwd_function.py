@@ -6,31 +6,33 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson_machine_learning.foundation_models import Model
 from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
 import os, re, ast
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 class WatsonQA:
 
     def __init__(self):
-        # dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-        # load_dotenv(dotenv_path)
+        dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+        load_dotenv(dotenv_path)
 
-        # self.WD_API_KEY = os.getenv('WD_API_KEY')
-        # self.WD_PROJECT_ID = os.getenv('WD_PROJECT_ID')
-        # self.WD_PROJECT_ID_2 = os.getenv('WD_PROJECT_ID_2')
-        # self.WD_URL = os.getenv('WD_URL')
+        self.WD_API_KEY = os.getenv('WD_API_KEY')
+        self.WD_PROJECT_ID = os.getenv('WD_PROJECT_ID')
+        self.WD_PROJECT_ID_2 = os.getenv('WD_PROJECT_ID_2')
+        self.WD_PROJECT_ID_3 = os.getenv('WD_PROJECT_ID_3')
+        self.WD_URL = os.getenv('WD_URL')
 
-        # self.WX_API_KEY = os.getenv('WX_API_KEY')
-        # self.WX_PROJECT_ID = os.getenv('WX_PROJECT_ID')
-        # self.WX_URL = os.getenv('WX_URL')
+        self.WX_API_KEY = os.getenv('WX_API_KEY')
+        self.WX_PROJECT_ID = os.getenv('WX_PROJECT_ID')
+        self.WX_URL = os.getenv('WX_URL')
 
-        self.WD_API_KEY = os.environ['WD_API_KEY']
-        self.WD_PROJECT_ID = os.environ['WD_PROJECT_ID']
-        self.WD_PROJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
-        self.WD_URL = os.environ['WD_URL']
+        # self.WD_API_KEY = os.environ['WD_API_KEY']
+        # self.WD_PROJECT_ID = os.environ['WD_PROJECT_ID']
+        # self.WD_PROJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
+        # self.WD_PROJECT_ID_3 = os.environ['WD_PROJECT_ID_3']
+        # self.WD_URL = os.environ['WD_URL']
 
-        self.WX_API_KEY = os.environ['WX_API_KEY']
-        self.WX_PROJECT_ID = os.environ['WX_PROJECT_ID']
-        self.WX_URL = os.environ['WX_URL']
+        # self.WX_API_KEY = os.environ['WX_API_KEY']
+        # self.WX_PROJECT_ID = os.environ['WX_PROJECT_ID']
+        # self.WX_URL = os.environ['WX_URL']
 
         # Initialize Watson Discovery
         self.authenticator_wd = IAMAuthenticator(self.WD_API_KEY)
@@ -75,7 +77,7 @@ class WatsonQA:
         if text_list == True:
             start_offset = [math.floor(query_result['results'][i]['document_passages'][0]['start_offset'] / 1000) * 1000 for i in
                             range(len(query_result['results']))]
-            end_offset = [math.ceil(query_result['results'][i]['document_passages'][0]['end_offset'] / 1000) * 1068 for i in
+            end_offset = [math.ceil(query_result['results'][i]['document_passages'][0]['end_offset'] / 1000) * 1100 for i in
                             range(len(query_result['results']))]
             # passages_list = [query_result['results'][i]['document_passages'][0]['passage_text'] for i in range(len(query_result['results']))]
             text_list = [query_result['results'][i]['text'][0] for i in range(len(query_result['results']))]
@@ -307,8 +309,6 @@ class WatsonQA:
 
         return {"output": [output_stage]}
     
-
-    ### Show information about the products
     async def watsonxai_product_information(self, product, user_question):
         PROJECT_ID = self.WD_PROJECT_ID_2
         context_text = self.send_to_watsondiscovery(product, PROJECT_ID, text_list=False)
@@ -316,10 +316,39 @@ class WatsonQA:
         prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
         Konteks_wd: {context_text}
         Pertanyaan: {user_question}
-        Jawan Pertanyaan mengenai produk BNI berdasarkan kriteria dari Konteks_wd. 
+        Jawab Pertanyaan mengenai produk BNI berdasarkan kriteria dari Konteks_wd. 
         Jawaban:
         """
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
         output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
         output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+        return output_stage
+    
+    async def watsonxai_product_summary(self, product):
+        PROJECT_ID = self.WD_PROJECT_ID_3
+        context_text = self.send_to_watsondiscovery(product, PROJECT_ID, text_list=True)
+
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        context_text: {context_text}
+        Tolong rangkum "context_text" menjadi satu paragraf yang menjelaskan tujuan, fasilitas, syarat, biaya dan manfaat dengan maksimum 5 kalimat.
+        Jawaban:
+        """
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+
+        return output_stage
+    
+    async def watsonxai_product_comparison(self, product_A, product_B):
+ 
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        kartu_{product_A}: {product_A}
+        kartu_{product_B}: {product_B}
+        Tolong bandingkan dan dibuat dalam nomor urut berupa tujuan, fasilitas, syarat, biaya dan manfaat dari kartu "kartu_{product_A}" dan kartu "kartu_{product_B}".
+        Jawaban:
+        """
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+
         return output_stage
