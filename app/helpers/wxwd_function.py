@@ -11,7 +11,7 @@ import os, re, ast
 class WatsonQA:
 
     def __init__(self):
-        dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+        # dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
         # load_dotenv(dotenv_path)
 
         # self.WD_API_KEY = os.getenv('WD_API_KEY')
@@ -26,7 +26,7 @@ class WatsonQA:
 
         self.WD_API_KEY = os.environ['WD_API_KEY']
         self.WD_PROJECT_ID = os.environ['WD_PROJECT_ID']
-        self.WD_PROJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
+        self.WD_POJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
         self.WD_PROJECT_ID_3 = os.environ['WD_PROJECT_ID_3']
         self.WD_URL = os.environ['WD_URL']
 
@@ -77,15 +77,38 @@ class WatsonQA:
         if text_list == True:
             start_offset = [math.floor(query_result['results'][i]['document_passages'][0]['start_offset'] / 1000) * 1000 for i in
                             range(len(query_result['results']))]
-            end_offset = [math.ceil(query_result['results'][i]['document_passages'][0]['end_offset'] / 1000) * 1100 for i in
+            end_offset = [math.ceil(query_result['results'][i]['document_passages'][0]['end_offset'] / 1000) * 1000 for i in
                             range(len(query_result['results']))]
-            # passages_list = [query_result['results'][i]['document_passages'][0]['passage_text'] for i in range(len(query_result['results']))]
+
+            # text_list = [query_result['results'][i]['text'][0] for i in range(len(query_result['results']))]
+
+            # passage_index = 0  # Initialize passage index
+            # len_text = len(text_list[passage_index])
+            # context_text = text_list[passage_index][
+            #                start_offset[passage_index]:min(end_offset[passage_index], len_text)]
+
+            max_allowed_length = 3000
+
+            adjusted_start_offsets = []
+            adjusted_end_offsets = []
+
+            for start_offset, end_offset in zip(start_offset, end_offset):
+                length = end_offset - start_offset
+                if length > max_allowed_length:
+                    # Adjust the offsets to ensure the length is no more than max_allowed_length
+                    adjusted_end_offset = start_offset + max_allowed_length
+                    adjusted_start_offsets.append(start_offset)
+                    adjusted_end_offsets.append(adjusted_end_offset)
+                else:
+                    adjusted_start_offsets.append(start_offset)
+                    adjusted_end_offsets.append(end_offset)
+
             text_list = [query_result['results'][i]['text'][0] for i in range(len(query_result['results']))]
 
             passage_index = 0  # Initialize passage index
             len_text = len(text_list[passage_index])
             context_text = text_list[passage_index][
-                           start_offset[passage_index]:min(end_offset[passage_index], len_text)]
+                            adjusted_start_offsets[passage_index]:min(adjusted_end_offsets[passage_index], len_text)]
 
         else:
             ### Select best highest confidence passage
@@ -330,7 +353,8 @@ class WatsonQA:
 
         prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
         context_text: {context_text}
-        Tolong rangkum "context_text" menjadi satu paragraf yang menjelaskan tujuan, fasilitas, syarat, biaya dan manfaat dengan maksimum 5 kalimat.
+        produk: {product}
+        Tolong rangkum dengan detail "produk" di dalam "context_text" yang menjelaskan tujuan, manfaat, fasilitas, syarat, biaya dari "produk". Jawaban tidak boleh lebih dari 8 kalimat dan harus kedalam bentuk satu paragraf.
         Jawaban:
         """
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
