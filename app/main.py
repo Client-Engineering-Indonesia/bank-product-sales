@@ -133,7 +133,7 @@ async def get_product_info(request: Request):
         product_name = user_input['product_name']
         question = user_input['user_question']
         watson_qa_instance = WatsonQA()
-        answer = await watson_qa_instance.watsonxai_product_information(product_name, question)
+        answer = await watson_qa_instance.watsonxai_product_information(product_name, user_question)
         return answer
     
     except Exception as e:
