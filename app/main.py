@@ -125,13 +125,27 @@ async def get_promo_crsl(request: Request):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@app.post("/bni_promo_info")
+async def get_promo_info(request: Request):
+
+    try:
+        user_input = await request.json()
+        promo_name = user_input['promo_name']
+        user_question = user_input['user_question']
+        watson_qa_instance = WatsonQA()
+        answer = await watson_qa_instance.watsonxai_promo_information(promo_name, user_question)
+        return answer
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
 @app.post("/bni_product_info")
 async def get_product_info(request: Request):
 
     try:
         user_input = await request.json()
         product_name = user_input['product_name']
-        question = user_input['user_question']
+        user_question = user_input['user_question']
         watson_qa_instance = WatsonQA()
         answer = await watson_qa_instance.watsonxai_product_information(product_name, user_question)
         return answer
