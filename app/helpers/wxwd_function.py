@@ -26,7 +26,7 @@ class WatsonQA:
 
         self.WD_API_KEY = os.environ['WD_API_KEY']
         self.WD_PROJECT_ID = os.environ['WD_PROJECT_ID']
-        self.WD_POJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
+        self.WD_PROJECT_ID_2 = os.environ['WD_PROJECT_ID_2']
         self.WD_PROJECT_ID_3 = os.environ['WD_PROJECT_ID_3']
         self.WD_URL = os.environ['WD_URL']
 
