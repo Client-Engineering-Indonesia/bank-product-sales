@@ -331,7 +331,22 @@ class WatsonQA:
         output_stage['response_type'] = "option"
 
         return {"output": [output_stage]}
-    
+
+    async def watsonxai_promo_information(self, product, user_question):
+        PROJECT_ID = self.WD_PROJECT_ID
+        context_text = self.send_to_watsondiscovery(product, PROJECT_ID, text_list=False)
+
+        prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
+        Konteks_wd: {context_text}
+        Pertanyaan: {user_question}
+        Jawab pertanyaan dari Konteks_wd mengenai promo BNI. Jawaban dalam bentuk satu paragraf dengan maksimum 5 kalimat. 
+        Jawaban:
+        """
+        output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
+        output_stage = {"output": str(output_stage.strip()).replace('\n\n', ' ').replace('*', '<li>')}
+        output_stage["output"] = re.sub(' +', ' ', output_stage["output"])
+        return output_stage
+
     async def watsonxai_product_information(self, product, user_question):
         PROJECT_ID = self.WD_PROJECT_ID_2
         context_text = self.send_to_watsondiscovery(product, PROJECT_ID, text_list=False)
@@ -339,7 +354,7 @@ class WatsonQA:
         prompt_stage = f"""Kamu adalah asisten yang membantu, menghormati, dan jujur. Selalu jawab sebisa mungkin, sambil tetap aman. Jawaban Anda tidak boleh mengandung konten yang berbahaya, tidak etis, rasial, seksis, beracun, berbahaya, atau ilegal. Pastikan bahwa respons Anda tidak memihak dan bersifat positif.
         Konteks_wd: {context_text}
         Pertanyaan: {user_question}
-        Jawab Pertanyaan mengenai produk BNI berdasarkan kriteria dari Konteks_wd. 
+        Jawab pertanyaan dari Konteks_wd mengenai produk BNI. Jawaban dalam bentuk satu paragraf dengan maksimum 5 kalimat. 
         Jawaban:
         """
         output_stage = self.send_to_watsonxai(prompts=[prompt_stage], stop_sequences=[])
