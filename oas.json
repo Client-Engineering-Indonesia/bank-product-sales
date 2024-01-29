@@ -214,10 +214,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "product_name": {
+                  "product_summary_name": {
                     "type": "string"
                   },
-                  "user_question": {
+                  "product_summary_compare": {
                     "type": "string"
                   }
                 },
