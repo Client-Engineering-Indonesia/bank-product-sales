@@ -153,7 +153,7 @@ class WatsonQA:
         return context_text
 
     def send_to_watsonxai(self, prompts, model_name='meta-llama/llama-2-13b-chat', decoding_method="greedy",
-                          max_new_tokens=4096, min_new_tokens=1, temperature=0, repetition_penalty=1.0,
+                          max_new_tokens=4095, min_new_tokens=1, temperature=0, repetition_penalty=1.0,
                           stop_sequences=["\n\n"]):
         assert not any(map(lambda prompt: len(prompt) < 1, prompts)), "make sure none of the prompts in the inputs prompts are empty"
 
